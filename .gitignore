@@ -1,0 +1,14 @@
+# Node dependencies
+node_modules
+
+# Build
+build
+
+# Environment variables
+.env
+
+# Coverage
+coverage
+
+# README with Personal anotations
+README.personal.md

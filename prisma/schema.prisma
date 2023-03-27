@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+// O modelo geralmente é sempre no singular e utilizamos Model ao invés de Tabela pois o Prisma
+// usa vários tipos de banco e em cada um a estrutra é de uma forma, logo Model é algo agnóstico
+// Quando tento usar @@ estou tentando configurar o módulo todo e com @ se refere ao campo
+// o comando map permite renomear o nome do modelo a nível de banco de dados
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  role          Role     @default(MEMBER)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  checkIns CheckIn[] // camel-case
+
+  @@map("users")
+}
+
+model CheckIn {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  validate_at DateTime?
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  gym    Gym    @relation(fields: [gym_id], references: [id])
+  gym_id String
+
+  @@map("check_ins")
+}
+
+model Gym {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  phone       String?
+  latitude    Decimal
+  longitude   Decimal
+
+  checkIns CheckIn[]
+
+  @@map("gyms")
+}
