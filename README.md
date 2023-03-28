@@ -60,20 +60,40 @@ Overall, this project was a great learning experience that allowed me to work wi
 ## **Quickstart**
 
 Below are the step-by-step instructions for running the project and accessing the endpoints specified throughout this document:
+<br />
+
+### **Development**
 
 1. Build and run a PostgreSQL container 
     + `docker-compose up -d --build`
     > **Warning** <br />
     Note that this step is only necessary if you do not already have a database instance set up. If you do have an instance set up, you can simply specify the connection details for that instance in the project's environment file (.env), and skip this step.
 2. Create a `.env` file with NODE_ENV, JWT_SECRET and DATABASE_URL environment variable (check the example file [.env.example])
-3. Install npm packages:<br />
+3. Run the Prisma library migrate to update the database schema
+    + `npx prisma migrate dev`
+    > **Warning** <br />
+    Please note that the `npx prisma migrate dev` command is intended for use only in the development environment. In production, it's not necessary to run migrate dev during deployment because there's no need to check for differences between an existing schema and its updated version. Instead, you can simply use the `npx prisma migrate deploy` command to apply pending migrations. 
+4. Install npm packages:
     + `npm install`
-4. Run the command tsup to transpile the TypeScript code to JavaScript. This will generate the JavaScript files in the ./build directory:<br />
-    + `node run build`
-5. Once the transpilation is complete, to start the server and access the endpoints, run the following code:<br />
-    + `node ./build/server.js`
-6. Access API Documentation on your browser:
-    +  `http://localhost:3333/docs`
+5. To run the project in Watch mode use:
+    + `npm run start:dev`
+<br />
+
+### **Production**
+
+1. Create a `.env` file with NODE_ENV, JWT_SECRET and DATABASE_URL environment variable (check the example file [.env.example])
+2. Run the Prisma library migrate to update the database schema
+    + `npx prisma migrate deploy`
+3. Run the command tsup to transpile the TypeScript code to JavaScript. This will generate the JavaScript files in the ./build directory:
+    + `npm run build`
+4. Once the transpilation is complete, to start the server and access the endpoints, run the following code:
+    + `npm run start` or `node ./build/server.js`
+<br />
+
+### **API Documentation**
+
+Access API Documentation on your browser:
+    `http://localhost:3333/docs`
 <br />
 
 > **Warning** <br /> * This API uses a cookie to hold the JWT refresh token, so it needs to be sent to renew the access token. Regarding the Access Token, this is a JWT token too and is carried in the request header.
@@ -89,7 +109,7 @@ To run tests, use the following command:
     + `npm run test:e2e`
     
 
-> **Warning** <br /> * To run the End to End (e2e) tests, it is mandatory to fill in the .env file with a valid PostgreSQL database URL, as it will be used together with vittest (schemas will be created and deleted during these tests). Regarding the unit test, these use structures in memory aiming at greater speed, as suggested by Martin Fowler in his article[InMemoryTestDatabase.MartinFowler]
+> **Warning** <br /> * To run the End to End (e2e) tests, it is mandatory to fill in the .env file with a valid PostgreSQL database URL, as it will be used together with vittest (schemas will be created and deleted during these tests). Regarding the unit test, these use structures in memory aiming at greater speed, as suggested by Martin Fowler in his article [In Memory Test Database][InMemoryTestDatabase.MartinFowler]
 
 [github.badge]: https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white
 [githubActions.badge]: https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=for-the-badge&logo=GitHub-Actions&logoColor=white
