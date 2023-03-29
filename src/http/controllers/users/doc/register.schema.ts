@@ -6,7 +6,7 @@ export default {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', default: 'User name' },
+        name: { type: 'string' },
         email: { type: 'string' },
         password: {
           type: 'string',

@@ -36,16 +36,32 @@ app.register(fastifySwagger, {
       url: 'https://github.com/ivanjrcomp/gym-api',
       description: 'More info here!',
     },
-    tags: [{ name: 'Gym Backend', description: 'Gym routes' }],
+    components: {
+      securitySchemes: {
+        Bearer: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Bearer Token',
+        },
+        cookieAuth: {
+          type: 'apiKey',
+          name: 'refreshToken',
+          in: 'cookie',
+        },
+      },
+    },
   },
   stripBasePath: true,
 })
 
 const buffer = fs.readFileSync('favicon.png')
+const base64Favicon: string = buffer.toString('base64')
 
 // eslint-disable-next-line
 app.register(fastifySwaggerUi, {
   routePrefix: '/docs',
+
   theme: {
     favicon: [
       {
@@ -53,7 +69,7 @@ app.register(fastifySwaggerUi, {
         rel: 'icon',
         sizes: '16x16',
         type: 'image/png',
-        content: Buffer.from(buffer.toString('base64'), 'base64').toString(),
+        content: base64Favicon,
       },
     ],
   },
@@ -63,6 +79,8 @@ app.register(fastifySwaggerUi, {
     showExtensions: true,
     displayRequestDuration: true,
     docExpansion: 'list',
+    showMutatedRequest: true,
+    withCredentials: true,
   },
   staticCSP: true,
   transformStaticCSP: (header) => header,
