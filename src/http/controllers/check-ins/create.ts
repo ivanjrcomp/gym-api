@@ -1,3 +1,4 @@
+import { MaxNumberOfCheckInsError } from '@/use-cases/errors/max-number-of-check-ins-error'
 import { makeCheckInUseCase } from '@/use-cases/factories/make-check-in-use-case'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
@@ -21,12 +22,22 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
   const checkInUseCase = makeCheckInUseCase()
 
-  await checkInUseCase.execute({
-    userId: request.user.sub,
-    gymId,
-    userLatitude: latitude,
-    userLongitude: longitude,
-  })
+  try {
+    await checkInUseCase.execute({
+      userId: request.user.sub,
+      gymId,
+      userLatitude: latitude,
+      userLongitude: longitude,
+    })
+
+  } catch (err) {
+    if (err instanceof MaxNumberOfCheckInsError) {
+      return reply.status(409).send({ message: err.message })
+    }
+
+    return reply.status(500).send(err)
+  }
+
 
   return reply.status(201).send()
 }
