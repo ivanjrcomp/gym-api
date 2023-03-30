@@ -8,7 +8,6 @@ import { env } from './env'
 import { checkInsRoutes } from './http/controllers/check-ins/routes'
 import { gymsRoutes } from './http/controllers/gyms/routes'
 import { usersRoutes } from './http/controllers/users/routes'
-import fs from 'node:fs'
 
 export const app = fastify()
 
@@ -55,39 +54,35 @@ app.register(fastifySwagger, {
   stripBasePath: true,
 })
 
-const buffer = fs.readFileSync('favicon.png')
-const base64Favicon: string = buffer.toString('base64')
+// const buffer = fs.readFileSync('favicon.png', 'base64')
 
-// eslint-disable-next-line
 app.register(fastifySwaggerUi, {
   routePrefix: '/docs',
-
-  theme: {
+  /* theme: {
     favicon: [
       {
         filename: 'favicon.png',
         rel: 'icon',
         sizes: '16x16',
         type: 'image/png',
-        content: base64Favicon,
+        content: Buffer.from(buffer, 'base64'),
       },
     ],
-  },
+  }, */
   uiConfig: {
     deepLinking: true,
     layout: 'BaseLayout',
     showExtensions: true,
     displayRequestDuration: true,
     docExpansion: 'list',
-    showMutatedRequest: true,
     withCredentials: true,
   },
   staticCSP: true,
   transformStaticCSP: (header) => header,
-  transformSpecification: (swaggerObject, request, reply) => {
+  transformSpecification: (swaggerObject, _request, _reply) => {
     return swaggerObject
   },
-  transformSpecificationClone: true,
+  transformSpecificationClone: false,
 })
 
 app.register(usersRoutes)
